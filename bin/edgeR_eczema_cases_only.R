@@ -3,7 +3,7 @@
 # Author: ccole
 ###############################################################################
 
-ver = '1.6'
+ver = '1.7'
 
 ## function to draw boxplot of gene expression by genotype
 boxplotGene = function (gene, counts) {
@@ -28,7 +28,7 @@ if (length(args) < 2) {
 }
 library(edgeR)
 
-outPrefix = 'eczema'
+outPrefix = 'EdgeR_analysis'
 countsFile = args[1]
 genotypesFile = args[2]
 if (length(args) == 3) {
@@ -84,7 +84,7 @@ if (packageVersion("edgeR")$major > 2) {
 #topTags(lrt.wtvscmpdhet)
 all.cmpdhet=topTags(lrt.wtvscmpdhet,n=2423432)$table
 all.cmpdhet = data.frame(GeneID=rownames(all.cmpdhet),GeneName=gene.names[rownames(all.cmpdhet),],logFC=round(all.cmpdhet$logFC,digits=3),FC=round(2^all.cmpdhet$logFC,digits=3),logCPM=round(all.cmpdhet$logCPM,digits=3),CPM=round(2^all.cmpdhet$logCPM,digits=2),LR=round(all.cmpdhet$LR,digits=2),PValue=signif(all.cmpdhet$PValue,digits=3),FDR=signif(all.cmpdhet$FDR,digits=3))
-write.table(all.cmpdhet[all.cmpdhet$PValue < 0.01,],file=sprintf("%s_wt_vs_cmpdhet.csv",outPrefix),sep=',',row.names=FALSE)
+write.table(all.cmpdhet[all.cmpdhet$PValue < 0.01,],file=sprintf("%s_FLG_wt_cases_vs_FLG_cmpdhet_cases.csv",outPrefix),sep=',',row.names=FALSE)
 
 # this is wt vs het
 if (packageVersion("edgeR")$major > 2) {
@@ -94,5 +94,5 @@ if (packageVersion("edgeR")$major > 2) {
 }
 all.het=topTags(lrt.wtvshet,n=2423432)$table
 all.het = data.frame(GeneID=rownames(all.het),GeneName=gene.names[rownames(all.het),],logFC=round(all.het$logFC,digits=3),FC=round(2^all.het$logFC,digits=3),logCPM=round(all.het$logCPM,digits=3),CPM=round(2^all.het$logCPM,digits=2),LR=round(all.het$LR,digits=2),PValue=signif(all.het$PValue,digits=3),FDR=signif(all.het$FDR,digits=3))
-write.table(all.het[all.het$PValue < 0.01,],file=sprintf("%s_wt_vs_het.csv",outPrefix),sep=',',row.names=FALSE)
+write.table(all.het[all.het$PValue < 0.01,],file=sprintf("%s_FLG_wt_cases_vs_FLG_het_cases.csv",outPrefix),sep=',',row.names=FALSE)
 

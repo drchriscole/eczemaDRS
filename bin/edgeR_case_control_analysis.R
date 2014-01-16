@@ -5,7 +5,7 @@
 # Author: ccole
 ###############################################################################
 
-ver = '1.5'
+ver = '1.6'
 
 ## function to draw boxplot of gene expression by genotype
 boxplotGene = function (gene, counts) {
@@ -36,7 +36,7 @@ paste(sprintf("Script version: %s",ver))
 paste(sprintf("R version: %s.%s",R.Version()$major,R.Version()$minor))
 paste(sprintf("EdgeR version: %s", packageVersion('edgeR')))
 
-outPrefix = 'edgeR'
+outPrefix = 'EdgeR_analysis'
 countsFile = args[1]
 ctrlGenotypesFile = args[2]
 caseGenotypesFile = args[3]
@@ -118,7 +118,7 @@ if (packageVersion("edgeR")$major > 2) {
 #topTags(lrt.wtvscmpdhet)
 all.cmpdhet=topTags(lrt.ctrlvscmpdhet,n=2423432)$table
 all.cmpdhet = data.frame(GeneID=rownames(all.cmpdhet),GeneName=gene.names[rownames(all.cmpdhet),],logFC=round(all.cmpdhet$logFC,digits=3),FC=round(2^all.cmpdhet$logFC,digits=3),logCPM=round(all.cmpdhet$logCPM,digits=3),CPM=round(2^all.cmpdhet$logCPM,digits=2),LR=round(all.cmpdhet$LR,digits=2),PValue=signif(all.cmpdhet$PValue,digits=2),FDR=signif(all.cmpdhet$FDR,digits=2))
-write.table(all.cmpdhet[all.cmpdhet$FDR < 0.05,],file=sprintf("%s_ctrl_wt_vs_cmpdhet.csv",outPrefix),sep=',',row.names=FALSE)
+write.table(all.cmpdhet[all.cmpdhet$FDR < 0.05,],file=sprintf("%s_FLG_cmpdhet_cases_vs_FLG_wt_ctrl.csv",outPrefix),sep=',',row.names=FALSE)
 
 # this is ctrl wt vs het
 if (packageVersion("edgeR")$major > 2) {
@@ -128,7 +128,7 @@ if (packageVersion("edgeR")$major > 2) {
 }
 all.het=topTags(lrt.ctrlwtvshet,n=2423432)$table
 all.het = data.frame(GeneID=rownames(all.het),GeneName=gene.names[rownames(all.het),],logFC=round(all.het$logFC,digits=3),FC=round(2^all.het$logFC,digits=3),logCPM=round(all.het$logCPM,digits=3),CPM=round(2^all.het$logCPM,digits=2),LR=round(all.het$LR,digits=2),PValue=signif(all.het$PValue,digits=2),FDR=signif(all.het$FDR,digits=2))
-write.table(all.het[all.het$FDR < 0.05,],file=sprintf("%s_ctrl_wt_vs_het.csv",outPrefix),sep=',',row.names=FALSE)
+write.table(all.het[all.het$FDR < 0.05,],file=sprintf("%s_FLG_het_cases_vs_FLG_wt_ctrl.csv",outPrefix),sep=',',row.names=FALSE)
 
 # ctrl wt vs eczema wt
 if (packageVersion("edgeR")$major > 2) {
@@ -138,4 +138,4 @@ if (packageVersion("edgeR")$major > 2) {
 }
 all.wt=topTags(ltr.ctrlwtvseczemawt,n=2423432)$table
 all.wt = data.frame(GeneID=rownames(all.wt),GeneName=gene.names[rownames(all.wt),],logFC=round(all.wt$logFC,digits=3),FC=round(2^all.wt$logFC,digits=3),logCPM=round(all.wt$logCPM,digits=3),CPM=round(2^all.wt$logCPM,digits=2),LR=round(all.wt$LR,digits=2),PValue=signif(all.wt$PValue,digits=2),FDR=signif(all.wt$FDR,digits=2))
-write.table(all.wt[all.wt$FDR < 0.05,],file=sprintf("%s_ctrl_wt_vs_wt.csv",outPrefix),sep=',',row.names=FALSE)
+write.table(all.wt[all.wt$FDR < 0.05,],file=sprintf("%s_FLG_wt_cases_vs_FLG_wt_cntrl.csv",outPrefix),sep=',',row.names=FALSE)

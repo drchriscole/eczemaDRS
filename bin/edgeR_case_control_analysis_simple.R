@@ -5,7 +5,7 @@
 # Author: ccole
 ###############################################################################
 
-ver = '0.4'
+ver = '0.5'
 
 ## function to draw boxplot of gene expression by genotype
 boxplotGene = function (gene, counts) {
@@ -30,7 +30,7 @@ if (length(args) < 1) {
 
 library(edgeR)
 
-outPrefix = 'simple_ctrl_vs_eczema_edgeR'
+outPrefix = 'EdgeR_analysis_all_cases_vs_all_controls'
 countsFile = args[1]
 if (length(args) == 2) {
    outPrefix = args[2]
