@@ -1,27 +1,27 @@
-Sample	Genotype	Gender
-eczema105	het	m
-eczema106	wt	m
-eczema141	cmpdhet	m
-eczema14	het	m
-eczema159	cmpdhet	m
-eczema188	cmpdhet	f
-eczema204	wt	m
-eczema213	cmpdhet	f
-eczema290	het	m
-eczema295	het	f
-eczema296	wt	m
-eczema297	het	f
-eczema305	het	f
-eczema316	het	m
-eczema327	cmpdhet	m
-eczema336	wt	m
-eczema398	het	m
-eczema45	wt	m
-eczema488	het	m
-eczema489	het	m
-eczema50	cmpdhet	f
-eczema54	cmpdhet	m
-eczema56	het	f
-eczema57	wt	m
-eczema90	het	m
-eczema96	wt	m
+Sample	Genotype	Gender  Age
+eczema105	het	m 16
+eczema106	wt	m  15
+eczema141	cmpdhet	m 13
+eczema14	het	m  12
+eczema159	cmpdhet	m 8
+eczema188	cmpdhet	f 9
+eczema204	wt	m  9
+eczema213	cmpdhet	f 12
+eczema290	het	m 15
+eczema295	het	f 6
+eczema296	wt	m  15
+eczema297	het	f 10
+eczema305	het	f 15
+eczema316	het	m 13
+eczema327	cmpdhet	m 11
+eczema336	wt	m  12
+eczema398	het	m 9
+eczema45	wt	m 15
+eczema488	het	m 11
+eczema489	het	m 15
+eczema50	cmpdhet	f  6
+eczema54	cmpdhet	m  16
+eczema56	het	f  11
+eczema57	wt	m 9
+eczema90	het	m  6
+eczema96	wt	m 11
