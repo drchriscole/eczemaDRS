@@ -4,7 +4,7 @@
 # Author: Chris Cole
 ###############################################################################
 
-ver='0.4'
+ver='0.5'
 
 ## extract commandline args
 args <- commandArgs(trailingOnly=TRUE)
@@ -41,9 +41,9 @@ counts.dat = read.delim(countsFile,head=T,row.names=1)
 
 ## read genotypes/gender data. Assumes file looks like this:
 ##  
-##  Sample  Genotype        Gender
-##  eczema105       het     m
-##  eczema106       wt      m
+##  Sample  Genotype        Gender  Age
+##  eczema105       het     m  16
+##  eczema106       wt      m  15
 genotypes.ctrl = read.delim(ctrlGenotypesFile,head=T)
 genotypes.case = read.delim(caseGenotypesFile,head=T)
 genotypes.ctrl[,2] <- paste(genotypes.ctrl[,2],"ctrl",sep='_')
@@ -78,15 +78,17 @@ pdf(file=sprintf("%s_heatmap.pdf", outPrefix),height=7,width=8)
 heatmap.2(cor(counts.dat),Colv=F,Rowv=F,trace='none',dendrogram="column",margins=c(7.5,7.5),labRow=names, labCol=names,keysize=1,lhei = c(2, 8),density.info='none',lwid=c(1,5))
 dev.off()
 
-# append gender to sample names for dendrogram plot
+# append gender and age to sample names for dendrogram plot
 genders = genotypes.dat[genotypes.dat$Sample == colnames(counts.dat),3]
+ages = genotypes.dat[genotypes.dat$Sample == colnames(counts.dat),4]
 names=paste(names,genders,sep=" ")
+names=paste(names,ages,sep=" ")
 
 ## plot dendrogram
 colnames(counts.dat) <- names
 d = dist(t(cor(counts.dat)))
 clust  = hclust(d)
-pdf(file=sprintf("%s_dendrogram.pdf", outPrefix))
-par(mai=c(0.6,0.6,0.4,1.9))
+pdf(file=sprintf("%s_dendrogram.pdf", outPrefix),height=7,width=8)
+par(mai=c(0.6,0.6,0.4,2.1))
 plot(as.dendrogram(clust),axes=FALSE,main="",xlab="",ylab="",sub="",horiz=TRUE)
 dev.off()
