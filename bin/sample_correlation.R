@@ -4,7 +4,7 @@
 # Author: Chris Cole
 ###############################################################################
 
-ver='0.5'
+ver='0.6'
 
 ## extract commandline args
 args <- commandArgs(trailingOnly=TRUE)
@@ -75,7 +75,9 @@ names[which(colnames(counts.dat) %in% case.chet)] <- 'Case (compound het)'
 
 ## plot correlation matrix of all-against-all
 pdf(file=sprintf("%s_heatmap.pdf", outPrefix),height=7,width=8)
-heatmap.2(cor(counts.dat),Colv=F,Rowv=F,trace='none',dendrogram="column",margins=c(7.5,7.5),labRow=names, labCol=names,keysize=1,lhei = c(2, 8),density.info='none',lwid=c(1,5))
+## [order(names)] construct required to ensure data (and labels) are ordered by label name.
+## Done this way in order to keep cases/controls genotypes together
+heatmap.2(cor(counts.dat[order(names)]),Colv=F,Rowv=F,trace='none',dendrogram="column",margins=c(7.9,7.9),labRow=names[order(names)], labCol=names[order(names)], keysize=1,lhei = c(2, 8),density.info='none',lwid=c(1,5))
 dev.off()
 
 # append gender and age to sample names for dendrogram plot
