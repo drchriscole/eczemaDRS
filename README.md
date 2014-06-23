@@ -15,7 +15,7 @@ Makefile - code for running scripts via make
 
 
  Requirements
- ------------
+--------------
  
 This code requires you have `make` and `R` on your $PATH and have the
 following R packages installed:
@@ -27,7 +27,7 @@ following R packages installed:
 R version 2.15.1 was used during development.
 
  Quickstart
- ----------
+------------
  
 To run all the scripts and generate all figures and data, type:
 
@@ -47,7 +47,7 @@ To delete all outputs, type:
  
 
  Details
- -------
+---------
 
 Currently this is just a placeholder. It will be developed over time
 as the paper is finalised.
