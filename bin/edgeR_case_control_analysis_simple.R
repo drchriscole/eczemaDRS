@@ -5,7 +5,7 @@
 # Author: ccole
 ###############################################################################
 
-ver = '0.5'
+ver = '0.6'
 
 ## function to draw boxplot of gene expression by genotype
 boxplotGene = function (gene, counts) {
@@ -19,21 +19,25 @@ boxplotGene = function (gene, counts) {
 ## extract commandline args
 args <- commandArgs(trailingOnly=TRUE)
 if (length(args) < 1) {
-   if (args[1] == '--version') {
-      cat(sprintf("edgeR version\t%s\n", packageVersion('edgeR')))
-      cat(R.version.string,"\n")
-      cat(sprintf("Script version\t%s\n",ver))
-      quit('no')
-   }
    stop('ERROR - Not enough arguments')
+}
+if (args[1] == '--version') {
+   cat(sprintf("edgeR version\t%s\n", packageVersion('edgeR')))
+   cat(R.version.string,"\n")
+   cat(sprintf("Script version\t%s\n",ver))
+   quit('no')
 }
 
 library(edgeR)
 
+pval = 0.05
 outPrefix = 'EdgeR_analysis_all_cases_vs_all_controls'
 countsFile = args[1]
-if (length(args) == 2) {
+if (length(args) > 1) {
    outPrefix = args[2]
+}
+if (length(args) == 3) {
+   pval = args[3]
 }
 
 paste(sprintf("Script version: %s",ver))
@@ -71,4 +75,9 @@ et <- exactTest(d)
 # output data
 res.all = topTags(et,n=2394742329)$table
 res.all = data.frame(GeneID=rownames(res.all),GeneName=gene.names[rownames(res.all),],logFC=round(res.all$logFC,digits=3),FC=round(2^res.all$logFC,digits=3),logCPM=round(res.all$logCPM,digits=3),CPM=round(2^res.all$logCPM,digits=2),PValue=signif(res.all$PValue,digits=3),FDR=signif(res.all$FDR,digits=3))
-write.table(res.all[res.all$FDR < 0.05,],file=sprintf("%s.csv",outPrefix),sep=',',row.names=FALSE)
+if (pval == 'all') {
+   write.table(res.all,file=sprintf("%s.csv",outPrefix),sep=',',row.names=FALSE)
+} else {
+   write.table(res.all[res.all$FDR < pval,],file=sprintf("%s.csv",outPrefix),sep=',',row.names=FALSE)
+}
+
