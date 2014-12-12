@@ -8,12 +8,14 @@ CASE_EXPR = data/eczema_gene_expression.tsv
 
 # Output to be generated
 FIGS = sample_correlation_heatmap.pdf sample_correlation_dendrogram.pdf FLG_boxplot.pdf
-CASE_CNTRL_DATA = edgeR_ctrl_wt_vs_cmpdhet.csv edgeR_ctrl_wt_vs_wt.csv edgeR_ctrl_wt_vs_het.csv
-CASE_ONLY_DATA = eczema_wt_vs_cmpdhet.csv eczema_wt_vs_het.csv
-SIMPLE_DATA = simple_ctrl_vs_eczema_edgeR.csv
+CASE_CNTRL_DATA = EdgeR_analysis_FLG_cmpdhet_cases_vs_FLG_wt_ctrl.csv EdgeR_analysis_FLG_het_cases_vs_FLG_wt_ctrl.csv EdgeR_analysis_FLG_wt_cases_vs_FLG_wt_cntrl.csv
+CASE_ONLY_DATA = EdgeR_analysis_FLG_wt_cases_vs_FLG_cmpdhet_cases.csv EdgeR_analysis_FLG_wt_cases_vs_FLG_het_cases.csv
+SIMPLE_DATA = EdgeR_analysis_all_cases_vs_all_controls.csv
 FLG_COR = FLG_correlation_eczema.csv
 
-.PHONY: clean figures analysis all
+VERSION = 1.0
+
+.PHONY: clean figures analysis all version
 
 all: analysis figures
 
@@ -46,6 +48,16 @@ $(SIMPLE_DATA): bin/edgeR_case_control_analysis_simple.R $(ALL_EXPR)
 ## Perform filaggrin gene expression correlation analysis 
 $(FLG_COR): bin/FLG_correlation_analysis.R $(CASE_EXPR) $(CASE_GENO)
 	Rscript bin/FLG_correlation_analysis.R $(CASE_EXPR) $(CASE_GENO)
+
+## report version of make file and scripts
+version:
+	@echo "Makefile version: $(VERSION)"
+	Rscript bin/sample_correlation.R --version
+	Rscript bin/plot_expression_boxplot.R --version
+	Rscript bin/edgeR_case_control_analysis.R --version
+	Rscript bin/edgeR_eczema_cases_only.R --version
+	Rscript bin/edgeR_case_control_analysis_simple.R --version
+	Rscript bin/FLG_correlation_analysis.R --version
 
 ## remove output files
 clean:
