@@ -6,7 +6,7 @@
 #
 #
 
-ver = '1.8'
+ver = '1.9'
 
 # calc std error function
 stderr <- function(x) {
@@ -71,7 +71,8 @@ countsFile = args[1]
 genotypesFile = args[2]
 if (length(args) >= 3) {
    outPrefix = args[3]
-} else if (length(args) == 4) {
+} 
+if (length(args) == 4) {
   geneID = args[4]
 } 
 
