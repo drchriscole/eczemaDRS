@@ -6,7 +6,7 @@
 #
 #
 
-ver = '1.6'
+ver = '1.7'
 
 # calc std error function
 stderr <- function(x) {
@@ -16,8 +16,8 @@ stderr <- function(x) {
 }
 
 # function to calculate correlation with FLG expression
-flgCor = function (x) {
-   val = cor(x,mean.all["ENSG00000143631",],method='pearson')
+flgCor = function (x, geneID) {
+   val = cor(x,mean.all[geneID,],method='pearson')
    return(val)
 }
 
@@ -64,11 +64,17 @@ library(edgeR)
 library(sqldf)
 
 outPrefix = 'FLG_correlation_eczema'
+geneID = 'ENSG00000143631'
 countsFile = args[1]
 genotypesFile = args[2]
-if (length(args) == 3) {
+if (length(args) >= 3) {
    outPrefix = args[3]
 }
+if (length(args) == 4) {
+  geneID = args[4]
+}
+
+paste(sprintf("Performing correlations against geneID %s",geneID))
 
 ## read counts data. Assumes file to look like this:
 ## 
@@ -127,7 +133,7 @@ se.wt = apply(counts.wt,1,stderr)
 se.all = cbind("WT"=se.wt,"Het"=se.het,"CmpdHet"=se.cmpdhet)
 
 # calc correlation of expression with FLG 
-flg.cor = apply(mean.all[rowSums(mean.all) > 100,],1,flgCor)
+flg.cor = apply(mean.all[rowSums(mean.all) > 100,],1,flgCor,geneID)
 
 # calc significant of correlation
 flg.cor.pval = sapply(flg.cor,calcPval)
@@ -165,5 +171,5 @@ dev.off()
 #dat.het.select = sqldf("SELECT * from 'dat.het' where pval < 0.05 and abs(logFC) > 0.5",row.names=T)
 dat.cmpdhet.select = sqldf("SELECT * from 'dat.cmpdhet' where pval < 0.05 and abs(logFC) > 0.5",row.names=T)
 
-output = cbind(GeneID=rownames(dat.cmpdhet.select[order(dat.cmpdhet.select$pval),]),GeneName=gene.names[rownames(dat.cmpdhet.select[order(dat.cmpdhet.select$pval),]),],signif(dat.cmpdhet.select[order(dat.cmpdhet.select$pval),],digit=2))
+output = cbind('GeneID'=rownames(dat.cmpdhet.select[order(dat.cmpdhet.select$pval),]),GeneName=gene.names[rownames(dat.cmpdhet.select[order(dat.cmpdhet.select$pval),]),],signif(dat.cmpdhet.select[order(dat.cmpdhet.select$pval),],digit=2))
 write.table(output,file=sprintf("%s.csv",outPrefix),sep=",",row.names=FALSE)
