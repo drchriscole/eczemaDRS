@@ -6,7 +6,7 @@
 #
 #
 
-ver = '1.7'
+ver = '1.8'
 
 # calc std error function
 stderr <- function(x) {
@@ -58,6 +58,8 @@ if (length(args) < 2) {
       quit('no')
    }
    stop('ERROR - Not enough arguments')
+} else if (length(args) > 4) {
+  stop('ERROR - too many arguments')
 }
 
 library(edgeR)
@@ -69,10 +71,9 @@ countsFile = args[1]
 genotypesFile = args[2]
 if (length(args) >= 3) {
    outPrefix = args[3]
-}
-if (length(args) == 4) {
+} else if (length(args) == 4) {
   geneID = args[4]
-}
+} 
 
 paste(sprintf("Performing correlations against geneID %s",geneID))
 
@@ -133,7 +134,12 @@ se.wt = apply(counts.wt,1,stderr)
 se.all = cbind("WT"=se.wt,"Het"=se.het,"CmpdHet"=se.cmpdhet)
 
 # calc correlation of expression with FLG 
-flg.cor = apply(mean.all[rowSums(mean.all) > 100,],1,flgCor,geneID)
+if (geneID %in% rownames(mean.all)) {
+  flg.cor = apply(mean.all[rowSums(mean.all) > 100,],1,flgCor,geneID)
+} else {
+  stop(sprintf("GeneID '%s' not found in data. Either it is not a valid ID or gene is not expressed.", geneID))
+}
+
 
 # calc significant of correlation
 flg.cor.pval = sapply(flg.cor,calcPval)
