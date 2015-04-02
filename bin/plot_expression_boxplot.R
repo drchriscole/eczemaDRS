@@ -4,7 +4,7 @@
 # Author: ccole
 ########################################
 
-ver = '0.3'
+ver = '0.4'
 
 ## function to draw boxplot of gene expression by genotype
 boxplotGene = function (gene, counts) {
@@ -35,6 +35,8 @@ if (length(args) < 3) {
       quit('no')
    }
    stop('ERROR - Not enough arguments')
+} else if (length(args) > 4) {
+  stop('ERROR - too many arguments')
 }
 library(edgeR)
 
@@ -74,6 +76,9 @@ if (nrow(genotypes.dat) != length(counts.dat)-1) {
 
 ## remove gene names column and store ID vs name lookup
 gene.names = data.frame(id=rownames(counts.dat), name=counts.dat[,1], stringsAsFactors=FALSE)
+if (!is.element(gene,gene.names$name)) {
+  stop(sprintf("Gene '%s' not found in data. Either it is not a valid gene or it is not expressed.", gene))
+}
 #rownames(gene.names) <- counts.dat[,1]
 counts.dat = counts.dat[,-1]
 
