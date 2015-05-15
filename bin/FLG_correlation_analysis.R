@@ -6,7 +6,7 @@
 #
 #
 
-ver = '1.9'
+ver = '1.9.1'
 
 # calc std error function
 stderr <- function(x) {
@@ -158,19 +158,19 @@ pdf(file=sprintf("%s.pdf",outPrefix),width=9,height=6)
 par(mfrow=c(1,2),mai=c(0.8,0.9,0.8,0.2),mgp=c(2.1,0.8,0))
 plot(dat.het$cor,dat.het$FC,pch=19,cex=0.3,main="Heterozygous vs Wild-type",xlab="",ylab="",ylim=c(0.1,6),log='y')
 points(dat.het["ENSG00000143631",7],dat.het["ENSG00000143631",8],col="orange",pch=19,cex=0.8)
-abline(h=0.5,lty=2,col="grey")
-abline(h=2,lty=2,col="grey")
+abline(h=0.707,lty=2,col="grey")
+abline(h=1.41,lty=2,col="grey")
 abline(v=0.8,lty=2,col="grey")
 abline(v=-0.8,lty=2,col="grey")
 legend("topright",legend=c("FLG"),pch=19,cex=0.8,col=c("orange"),bg="white")
 plot(dat.cmpdhet$cor,dat.cmpdhet$FC,pch=19,cex=0.3,main="Compound Het. vs Wild-type",xlab="",ylab="",ylim=c(0.1,6),log='y')
 points(dat.cmpdhet["ENSG00000143631",7],dat.cmpdhet["ENSG00000143631",8],col="orange",pch=19,cex=0.8)
-abline(h=0.5,lty=2,col="grey")
-abline(h=2,lty=2,col="grey")
+abline(h=0.707,lty=2,col="grey")
+abline(h=1.41,lty=2,col="grey")
 abline(v=0.8,lty=2,col="grey")
 abline(v=-0.8,lty=2,col="grey")
 legend("topright",legend=c("FLG"),pch=19,cex=0.8,col=c("orange"),bg="white")
-mtext("Correlation with FLG Expression",side=1,outer=T,line=-1)
+mtext(sprintf("Correlation with %s Expression",gene.names[geneID,]),side=1,outer=T,line=-1)
 mtext(expression("Fold-change "(log[2]~scale)),side=2,outer=T,line=-2,las=3)
 dev.off()
 
