@@ -11,13 +11,15 @@ GENE ?= RPTOR
 GENEID:=$(shell grep "$(GENE)\b" $(ALL_EXPR) | cut -f 1)
 FIG = $(GENE)_boxplot.pdf
 COR = $(GENE)_correlation_eczema.csv
-VERSION = 0.3
+ANNOT = $(GENE)_correlation_eczema_annotated.tsv
+
+VERSION = 0.4
 
 .PHONY: clean figures  all version
 
 all: figures
 
-figures: $(FIG) $(COR)
+figures: $(FIG) $(ANNOT)
 	@echo "Creating figures - Done!"
 
 ## Plot filaggrin gene expression across cases and controls stratified by genotype
@@ -28,6 +30,10 @@ $(FIG): bin/plot_expression_boxplot.R $(ALL_EXPR) $(CTRL_GENO) $(CASE_GENO)
 $(COR): bin/FLG_correlation_analysis.R $(CASE_EXPR) $(CASE_GENO)
 	Rscript bin/FLG_correlation_analysis.R $(CASE_EXPR) $(CASE_GENO) $(GENE)_correlation_eczema $(GENEID) 25
 
+## annotate output with Ensembl info
+$(ANNOT): $(COR)
+	add_gene_name_column.pl --in $< --species human --delim ',' --desc --info-col 1 --out $@
+
 ## report version of make file and scripts
 version:
 	@echo "Makefile version: $(VERSION)"
@@ -36,4 +42,4 @@ version:
 
 ## remove output files
 clean:
-	rm -f *.pdf *.csv
+	rm -f *.pdf *.csv *.tsv
