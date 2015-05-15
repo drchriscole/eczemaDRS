@@ -1,0 +1,39 @@
+## Makefile for autogenerating analysis and figures for paper...
+
+# Source data
+ALL_EXPR = data/all_gene_expression.tsv
+CTRL_GENO = data/control_FLG_genotypes.dat
+CASE_GENO = data/eczema_FLG_genotypes.dat
+CASE_EXPR = data/eczema_gene_expression.tsv
+
+# Output to be generated
+GENE ?= RPTOR
+GENEID:=$(shell grep "$(GENE)\b" $(ALL_EXPR) | cut -f 1)
+FIG = $(GENE)_boxplot.pdf
+COR = $(GENE)_correlation_eczema.csv
+VERSION = 0.3
+
+.PHONY: clean figures  all version
+
+all: figures
+
+figures: $(FIG) $(COR)
+	@echo "Creating figures - Done!"
+
+## Plot filaggrin gene expression across cases and controls stratified by genotype
+$(FIG): bin/plot_expression_boxplot.R $(ALL_EXPR) $(CTRL_GENO) $(CASE_GENO)
+	Rscript bin/plot_expression_boxplot.R $(ALL_EXPR) $(CTRL_GENO) $(CASE_GENO) $(GENE) 
+
+## Perform filaggrin gene expression correlation analysis 
+$(COR): bin/FLG_correlation_analysis.R $(CASE_EXPR) $(CASE_GENO)
+	Rscript bin/FLG_correlation_analysis.R $(CASE_EXPR) $(CASE_GENO) $(GENE)_correlation_eczema $(GENEID) 25
+
+## report version of make file and scripts
+version:
+	@echo "Makefile version: $(VERSION)"
+	Rscript bin/plot_expression_boxplot.R --version
+	Rscript bin/FLG_correlation_analysis.R --version
+
+## remove output files
+clean:
+	rm -f *.pdf *.csv
