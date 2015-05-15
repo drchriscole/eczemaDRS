@@ -6,7 +6,7 @@
 #
 #
 
-ver = '1.9.1'
+ver = '1.10'
 
 # calc std error function
 stderr <- function(x) {
@@ -58,7 +58,7 @@ if (length(args) < 2) {
       quit('no')
    }
    stop('ERROR - Not enough arguments')
-} else if (length(args) > 4) {
+} else if (length(args) > 5) {
   stop('ERROR - too many arguments')
 }
 
@@ -67,14 +67,18 @@ library(sqldf)
 
 outPrefix = 'FLG_correlation_eczema'
 geneID = 'ENSG00000143631'
+cutoff = 100
 countsFile = args[1]
 genotypesFile = args[2]
 if (length(args) >= 3) {
    outPrefix = args[3]
 } 
-if (length(args) == 4) {
+if (length(args) >= 4) {
   geneID = args[4]
 } 
+if (length(args) == 5) {
+  cutoff = as.numeric(args[5])
+}
 
 paste(sprintf("Performing correlations against geneID %s",geneID))
 
@@ -136,21 +140,22 @@ se.all = cbind("WT"=se.wt,"Het"=se.het,"CmpdHet"=se.cmpdhet)
 
 # calc correlation of expression with FLG 
 if (geneID %in% rownames(mean.all)) {
-  flg.cor = apply(mean.all[rowSums(mean.all) > 100,],1,flgCor,geneID)
+  flg.cor = apply(mean.all[rowSums(mean.all) > cutoff,],1,flgCor,geneID)
 } else {
   stop(sprintf("GeneID '%s' not found in data. Either it is not a valid ID or gene is not expressed.", geneID))
 }
 
+length(flg.cor)
 
 # calc significant of correlation
 flg.cor.pval = sapply(flg.cor,calcPval)
 
 # create data frame with gene expression (Eczema WT, Het & Cmpdhet), FLG correlation and Fold-change
 ratio = mean.het/mean.wt
-tmp = cbind(mean.all[rowSums(mean.all) > 100,],sd.all[rowSums(mean.all) > 100,],"cor"=flg.cor,"FC"=ratio[rowSums(mean.all) > 100],"logFC"=log2(ratio[rowSums(mean.all) > 100]),pval=flg.cor.pval)
+tmp = cbind(mean.all[rowSums(mean.all) > cutoff,],sd.all[rowSums(mean.all) > cutoff,],"cor"=flg.cor,"FC"=ratio[rowSums(mean.all) > cutoff],"logFC"=log2(ratio[rowSums(mean.all) > cutoff]),pval=flg.cor.pval)
 dat.het = data.frame(tmp)
 ratio = mean.cmpdhet/mean.wt
-tmp = cbind(mean.all[rowSums(mean.all) > 100,],sd.all[rowSums(mean.all) > 100,],"cor"=flg.cor,"FC"=ratio[rowSums(mean.all) > 100],"logFC"=log2(ratio[rowSums(mean.all) > 100]),pval=flg.cor.pval)
+tmp = cbind(mean.all[rowSums(mean.all) > cutoff,],sd.all[rowSums(mean.all) > cutoff,],"cor"=flg.cor,"FC"=ratio[rowSums(mean.all) > cutoff],"logFC"=log2(ratio[rowSums(mean.all) > cutoff]),pval=flg.cor.pval)
 dat.cmpdhet = data.frame(tmp)
 
 # plot scatter of logFC vs correlation
