@@ -6,7 +6,7 @@
 #
 #
 
-ver = '1.11'
+ver = '1.11.1'
 
 # calc std error function
 stderr <- function(x) {
@@ -184,4 +184,4 @@ dev.off()
 dat.cmpdhet.select = sqldf("SELECT * from 'dat.cmpdhet' where pval < 0.05 and abs(logFC) > 0.5",row.names=T)
 
 output = cbind('GeneID'=rownames(dat.cmpdhet.select[order(dat.cmpdhet.select$pval),]),GeneName=gene.names[rownames(dat.cmpdhet.select[order(dat.cmpdhet.select$pval),]),],signif(dat.cmpdhet.select[order(dat.cmpdhet.select$pval),],digit=2))
-write.table(output,file=sprintf("%s.csv",outPrefix),sep=",",row.names=FALSE)
+write.table(output,file=sprintf("%s.tsv",outPrefix),sep=",",row.names=FALSE)
