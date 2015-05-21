@@ -6,7 +6,7 @@
 #
 #
 
-ver = '1.10'
+ver = '1.11'
 
 # calc std error function
 stderr <- function(x) {
@@ -145,7 +145,7 @@ if (geneID %in% rownames(mean.all)) {
   stop(sprintf("GeneID '%s' not found in data. Either it is not a valid ID or gene is not expressed.", geneID))
 }
 
-length(flg.cor)
+paste(sprintf("Calculating correlations over %d genes",length(flg.cor)))
 
 # calc significant of correlation
 flg.cor.pval = sapply(flg.cor,calcPval)
