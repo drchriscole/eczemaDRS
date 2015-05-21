@@ -13,7 +13,7 @@ FIG = $(GENE)_boxplot.pdf
 COR = $(GENE)_correlation_eczema.csv
 ANNOT = $(GENE)_correlation_eczema_annotated.tsv
 
-VERSION = 0.4
+VERSION = 0.5
 
 .PHONY: clean figures  all version
 
@@ -30,9 +30,9 @@ $(FIG): bin/plot_expression_boxplot.R $(ALL_EXPR) $(CTRL_GENO) $(CASE_GENO)
 $(COR): bin/FLG_correlation_analysis.R $(CASE_EXPR) $(CASE_GENO)
 	Rscript bin/FLG_correlation_analysis.R $(CASE_EXPR) $(CASE_GENO) $(GENE)_correlation_eczema $(GENEID) 25
 
-## annotate output with Ensembl info
+## annotate output with Ensembl info, if script available
 $(ANNOT): $(COR)
-	add_gene_name_column.pl --in $< --species human --delim ',' --desc --info-col 1 --out $@
+	@which -s add_gene_name_column.pl && add_gene_name_column.pl --in $< --species human --delim ',' --desc --info-col 1 --out $@ || echo "Note: although not critical, the add_gene_name_column.pl script was not found. It can be downloaded from here: https://github.com/drchriscole/ensemblUtils" 
 
 ## report version of make file and scripts
 version:
