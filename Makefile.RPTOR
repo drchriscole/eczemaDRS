@@ -10,10 +10,10 @@ CASE_EXPR = data/eczema_gene_expression.tsv
 GENE ?= RPTOR
 GENEID:=$(shell grep "$(GENE)\b" $(ALL_EXPR) | cut -f 1)
 FIG = $(GENE)_boxplot.pdf
-COR = $(GENE)_correlation_eczema.csv
+COR = $(GENE)_correlation_eczema.tsv
 ANNOT = $(GENE)_correlation_eczema_annotated.tsv
 
-VERSION = 0.5
+VERSION = 0.6
 
 .PHONY: clean figures  all version
 
@@ -42,4 +42,4 @@ version:
 
 ## remove output files
 clean:
-	rm -f *.pdf *.csv *.tsv
+	rm -f *.pdf *.tsv
