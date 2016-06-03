@@ -13,9 +13,9 @@ FIG = $(GENE)_boxplot.pdf
 COR = $(GENE)_correlation_eczema.tsv
 ANNOT = $(GENE)_correlation_eczema_annotated.tsv
 
-VERSION = 0.6
+VERSION = 0.7
 
-.PHONY: clean figures  all version
+.PHONY: clean reallyclean figures  all version
 
 all: figures
 
@@ -42,4 +42,8 @@ version:
 
 ## remove output files
 clean:
+	rm -f $(GENE)*.pdf $(GENE)*.tsv
+
+reallyclean:
 	rm -f *.pdf *.tsv
+
