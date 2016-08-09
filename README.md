@@ -4,15 +4,18 @@
 Within this repository you will find all the code and data files as 
 used/described in the Cole et al paper (see CITATION).
 
+It has also been adapted for work on a collaboration with Ryan O'Shaughnessy 
+(UCL) on RPTOR gene expression (see CITATION).
+
 The repository has the following structure:
 
-data/    - source data   
-bin/     - scripts for processing the source data  
-CITATION - information on how to cite this work  
-README   - information on the code and data (this file)  
-LICENCE  - information on the licencing of the code  
-Makefile - code for running scripts via make  
-Makefile.RPTOR - code for running make to do RPTOR-specific analysis
+data/     - source data   
+bin/      - scripts for processing the source data  
+CITATION  - information on how to cite this work  
+README.md - information on the code and data (this file)  
+LICENCE   - information on the licencing of the code  
+Makefile  - code for running scripts via make  
+Makefile.RPTOR - code for performing RPTOR-specific analysis
 
  Requirements
 --------------
@@ -56,5 +59,5 @@ This github repository accompanies two papers and covers the differential gene e
 in a cohort of Irish peadiatric eczema cases in comparison to their filaggrin, FLG, genotype.
 
 The simplest way to use the code is via the Quickstart guide above, but each script found under 
-bin/ can run individually if you know what you're doing. Code has some in-line comments.
+bin/ can run be individually if you know what you're doing. Code has some in-line comments.
 
