@@ -61,4 +61,4 @@ version:
 
 ## remove output files
 clean:
-	rm -f *.pdf *.csv
+	rm -f *.pdf *.csv *.tsv
