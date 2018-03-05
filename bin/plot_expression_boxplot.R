@@ -4,10 +4,10 @@
 # Author: ccole
 ########################################
 
-ver = '0.4'
+ver = '0.5'
 
 ## function to draw boxplot of gene expression by genotype
-boxplotGene = function (gene, counts) {
+boxplotGene = function (gene, gene.name, counts) {
    list = list()
    list[[1]] = t(counts[gene,colnames(counts) %in% ctrl.wt])
    list[[2]] = t(counts[gene,colnames(counts) %in% case.wt])
@@ -20,9 +20,15 @@ boxplotGene = function (gene, counts) {
    box()
    axis(2)
    mtext("Gene Expression (Normalised read counts)",side=2,line=3,cex=1.2)
-   par(mgp=c(3.5,1.5,0))
-   axis(1,at=seq(1:4),cex.axis=0.9,labels=c("Control\nWild-type","Eczema case\nwild-type","Eczema case\nheterozygote","Eczema case\ncompound het"))
-   mtext("Phenotype and FLG genotype",side=1,line=3,cex=1.2)
+   par(mgp=c(3.5,2.5,0))
+   axis(1,at=seq(1:4),cex.axis=0.9,
+        labels=c(sprintf("Control\nWild-type\nn = %d", length(ctrl.wt)),
+                sprintf("Eczema case\nwild-type\nn = %d", length(case.wt)),
+                sprintf("Eczema case\nheterozygote\nn = %d", length(case.het)),
+                sprintf("Eczema case\ncompound het\nn = %d", length(case.chet))
+        ))
+   mtext("Phenotype and FLG genotype",side=1,line=4,cex=1.2)
+   title(gene.name)
 }
 
 ## extract commandline args
@@ -109,6 +115,6 @@ counts.norm = data.frame(cpm(d, normalized.lib.sizes=T))
 
 ## plot data
 pdf(file=sprintf("%s_boxplot.pdf",gene))
-boxplotGene(gene.names[gene.names$name==gene,1],counts.norm)
+boxplotGene(gene.names[gene.names$name==gene,1],gene,counts.norm)
 dev.off()
 
