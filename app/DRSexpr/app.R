@@ -9,7 +9,7 @@
 
 library(shiny)
 
-version = "0.2"
+version = "0.3"
 countsFile = '../../data/all_gene_expression.tsv'
 ctrlGenotypesFile = '../../data/control_FLG_genotypes.dat'
 caseGenotypesFile = '../../data/eczema_FLG_genotypes.dat'
@@ -54,6 +54,21 @@ d = DGEList(counts.dat,group = genotypes)
 d = calcNormFactors(d)
 counts.norm = data.frame(cpm(d, normalized.lib.sizes=T))
 
+plotBoxSimple <-function(gene) {
+  list = list()
+  list[[1]] = t(counts.norm[gene.names[gene.names$name==gene,1],1:10])
+  list[[2]] = t(counts.norm[gene.names[gene.names$name==gene,1],11:36])
+  boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#d6ca79'),axes=FALSE)
+  box()
+  axis(2)
+  mtext("Gene Expression (Normalised read counts)",side=2,line=3,cex=1.2)
+  par(mgp=c(3.5,2.5,0))
+  axis(1,at=seq(1:2),cex.axis=0.9,
+       labels=c(sprintf("Control\nSkin\nn = 10"),
+                sprintf("Atopic\nSkin\nn = 26")
+       ))
+  title(gene)
+}
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -84,19 +99,7 @@ server <- function(input, output) {
         stop(sprintf("Gene '%s' not found in data. Either it is not a valid gene or it is not expressed.", input$gene))
       }
     
-    list = list()
-    list[[1]] = t(counts.norm[gene.names[gene.names$name==input$gene,1],1:10])
-    list[[2]] = t(counts.norm[gene.names[gene.names$name==input$gene,1],11:36])
-    boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#d6ca79'),axes=FALSE)
-    box()
-    axis(2)
-    mtext("Gene Expression (Normalised read counts)",side=2,line=3,cex=1.2)
-    par(mgp=c(3.5,2.5,0))
-    axis(1,at=seq(1:2),cex.axis=0.9,
-         labels=c(sprintf("Control\nSkin\nn = 10"),
-                  sprintf("Atopic\nSkin\nn = 26")
-         ))
-    title(input$gene)
+      plotBoxSimple(input$gene)
   })
   
   output$downloadPlot <- downloadHandler(
@@ -104,22 +107,9 @@ server <- function(input, output) {
     
     content = function(file){
       cairo_pdf(filename = file,
-                width = 18, height = 10, pointsize = 12, family = "sans", bg = "transparent",
+                width = 8, height = 8, pointsize = 14, family = "sans", bg = "transparent",
                 antialias = "subpixel",fallback_resolution = 300)
-      
-      list = list()
-      list[[1]] = t(counts.norm[gene.names[gene.names$name==input$gene,1],1:10])
-      list[[2]] = t(counts.norm[gene.names[gene.names$name==input$gene,1],11:36])
-      boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#d6ca79'),axes=FALSE)
-      box()
-      axis(2)
-      mtext("Gene Expression (Normalised read counts)",side=2,line=3,cex=1.2)
-      par(mgp=c(3.5,2.5,0))
-      axis(1,at=seq(1:2),cex.axis=0.9,
-           labels=c(sprintf("Control\nSkin\nn = 10"),
-                    sprintf("Atopic\nSkin\nn = 26")
-           ))
-      title(input$gene)
+      plotBoxSimple(input$gene)
       dev.off()
     },
     
