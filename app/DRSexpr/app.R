@@ -9,7 +9,7 @@
 
 library(shiny)
 
-version = "0.1"
+version = "0.2"
 countsFile = '../../data/all_gene_expression.tsv'
 ctrlGenotypesFile = '../../data/control_FLG_genotypes.dat'
 caseGenotypesFile = '../../data/eczema_FLG_genotypes.dat'
@@ -69,7 +69,8 @@ ui <- fluidPage(
       
       # Show a plot of the generated distribution
       mainPanel(
-         plotOutput("gene_boxplot")
+         plotOutput("gene_boxplot"),
+         downloadLink("downloadPlot", "Download Plot")
       )
    )
 )
@@ -96,16 +97,35 @@ server <- function(input, output) {
                   sprintf("Atopic\nSkin\nn = 26")
          ))
     title(input$gene)
-  })  
+  })
   
-    output$distPlot <- renderPlot({
-      # generate bins based on input$bins from ui.R
-      x    <- faithful[, 2] 
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
+  output$downloadPlot <- downloadHandler(
+    filename = function(){paste(input$gene, '.pdf', sep = '')},
+    
+    content = function(file){
+      cairo_pdf(filename = file,
+                width = 18, height = 10, pointsize = 12, family = "sans", bg = "transparent",
+                antialias = "subpixel",fallback_resolution = 300)
       
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white')
-   })
+      list = list()
+      list[[1]] = t(counts.norm[gene.names[gene.names$name==input$gene,1],1:10])
+      list[[2]] = t(counts.norm[gene.names[gene.names$name==input$gene,1],11:36])
+      boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#d6ca79'),axes=FALSE)
+      box()
+      axis(2)
+      mtext("Gene Expression (Normalised read counts)",side=2,line=3,cex=1.2)
+      par(mgp=c(3.5,2.5,0))
+      axis(1,at=seq(1:2),cex.axis=0.9,
+           labels=c(sprintf("Control\nSkin\nn = 10"),
+                    sprintf("Atopic\nSkin\nn = 26")
+           ))
+      title(input$gene)
+      dev.off()
+    },
+    
+    contentType = "application/pdf"
+  )
+  
 }
 
 # Run the application 
