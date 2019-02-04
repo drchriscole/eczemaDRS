@@ -10,7 +10,7 @@
 library(shiny)
 library(edgeR)
 
-version = "0.6"
+version = "0.7"
 countsFile = 'all_gene_expression.tsv'
 ctrlGenotypesFile = 'control_FLG_genotypes.dat'
 caseGenotypesFile = 'eczema_FLG_genotypes.dat'
@@ -47,7 +47,18 @@ counts.dat = counts.dat[rowSums(counts.dat)>= (length(counts.dat)*2),]
 
 # ignoring genotypes as only interested in cases vs ctrls
 # and we know first 10 are the controls
-genotypes = c(rep('ctrl', 10), rep('case',26))
+genotypes.ctrl = read.delim(ctrlGenotypesFile,head=T)
+genotypes.case = read.delim(caseGenotypesFile,head=T)
+genotypes.ctrl[,2] <- paste(genotypes.ctrl[,2],"ctrl",sep='_')
+genotypes.dat = rbind(genotypes.ctrl,genotypes.case)
+
+ctrl.wt = genotypes.ctrl[genotypes.ctrl$Genotype == 'wt_ctrl',1]
+ctrl.het = genotypes.ctrl[genotypes.ctrl$Genotype == 'het_ctrl',1]
+case.wt = genotypes.case[genotypes.case$Genotype == 'wt',1]
+case.het = genotypes.case[genotypes.case$Genotype == 'het',1]
+case.chet = genotypes.case[genotypes.case$Genotype == 'cmpdhet',1]
+
+genotypes = genotypes.dat[genotypes.dat$Sample == colnames(counts.dat),2]
 genders = genotypes.dat[genotypes.dat$Sample == colnames(counts.dat),3]
 design = model.matrix(~genders+genotypes)
 
@@ -75,10 +86,10 @@ plotBoxSimple <-function(gene) {
 plotBoxGeno <-function(gene) {
   name = gene.names[gene.names$name==gene,1]
   list = list()
-  list[[1]] = t(counts.norm[name,colnames(counts) %in% ctrl.wt])
-  list[[2]] = t(counts.norm[name,colnames(counts) %in% case.wt])
-  list[[3]] = t(counts.norm[name,colnames(counts) %in% case.het])
-  list[[4]] = t(counts.norm[name,colnames(counts) %in% case.chet])
+  list[[1]] = t(counts.norm[name,colnames(counts.norm) %in% ctrl.wt])
+  list[[2]] = t(counts.norm[name,colnames(counts.norm) %in% case.wt])
+  list[[3]] = t(counts.norm[name,colnames(counts.norm) %in% case.het])
+  list[[4]] = t(counts.norm[name,colnames(counts.norm) %in% case.chet])
   boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#c9dfff','#d9c9ff','#c9ffe9'),axes=FALSE)
   box()
   axis(2)
@@ -90,7 +101,7 @@ plotBoxGeno <-function(gene) {
                 sprintf("Atopic case\nheterozygote\nn = %d", length(case.het)),
                 sprintf("Atopic case\ncompound het\nn = %d", length(case.chet))
        ))
-  title(name)
+  title(sprintf("%s (%s)",gene,name))
 }
 
 # Define UI for application that draws a histogram
