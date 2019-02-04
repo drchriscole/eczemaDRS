@@ -9,7 +9,7 @@
 
 library(shiny)
 
-version = "0.4"
+version = "0.5"
 countsFile = '../../data/all_gene_expression.tsv'
 ctrlGenotypesFile = '../../data/control_FLG_genotypes.dat'
 caseGenotypesFile = '../../data/eczema_FLG_genotypes.dat'
@@ -105,13 +105,15 @@ ui <- fluidPage(
          radioButtons("plotType", "Plot type:",
                       c("Simple Cases vs Controls" = "simple",
                         "Cases vs Controls Stratified by FLG Genotype" = "genotypes"),
-                      selected = "simple")
+                      selected = "simple"),
+         width = 3
       ),
       
       # Show a plot of the generated distribution
       mainPanel(
          plotOutput("gene_boxplot"),
-         downloadLink("downloadPlot", "Download Plot")
+         downloadLink("downloadPlot", "Download Plot"),
+         width = 7
       )
    )
 )
@@ -129,7 +131,7 @@ server <- function(input, output) {
       } else {
         plotBoxGeno(input$gene)
       }
-  })
+  }, width = 500, height = 400)
   
   output$downloadPlot <- downloadHandler(
     filename = function(){paste(input$gene, '.pdf', sep = '')},
