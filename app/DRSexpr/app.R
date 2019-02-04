@@ -8,11 +8,12 @@
 #
 
 library(shiny)
+library(edgeR)
 
-version = "0.5"
-countsFile = '../../data/all_gene_expression.tsv'
-ctrlGenotypesFile = '../../data/control_FLG_genotypes.dat'
-caseGenotypesFile = '../../data/eczema_FLG_genotypes.dat'
+version = "0.6"
+countsFile = 'all_gene_expression.tsv'
+ctrlGenotypesFile = 'control_FLG_genotypes.dat'
+caseGenotypesFile = 'eczema_FLG_genotypes.dat'
 
 ## read counts data. Assumes file to look like this:
 ## 
@@ -74,10 +75,10 @@ plotBoxSimple <-function(gene) {
 plotBoxGeno <-function(gene) {
   name = gene.names[gene.names$name==gene,1]
   list = list()
-  list[[1]] = t(counts[name,colnames(counts) %in% ctrl.wt])
-  list[[2]] = t(counts[name,colnames(counts) %in% case.wt])
-  list[[3]] = t(counts[name,colnames(counts) %in% case.het])
-  list[[4]] = t(counts[name,colnames(counts) %in% case.chet])
+  list[[1]] = t(counts.norm[name,colnames(counts) %in% ctrl.wt])
+  list[[2]] = t(counts.norm[name,colnames(counts) %in% case.wt])
+  list[[3]] = t(counts.norm[name,colnames(counts) %in% case.het])
+  list[[4]] = t(counts.norm[name,colnames(counts) %in% case.chet])
   boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#c9dfff','#d9c9ff','#c9ffe9'),axes=FALSE)
   box()
   axis(2)
