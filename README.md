@@ -1,4 +1,8 @@
- Eczema DRS Paper Code Repository
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3903510.svg)](https://doi.org/10.5281/zenodo.3903510)
+
+
+Eczema DRS Paper Code Repository
 ==================================
 
 Within this repository you will find all the code and data files as 
