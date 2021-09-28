@@ -10,7 +10,7 @@
 library(shiny)
 library(edgeR)
 
-version = "0.7"
+version = "0.8"
 countsFile = 'all_gene_expression.tsv'
 ctrlGenotypesFile = 'control_FLG_genotypes.dat'
 caseGenotypesFile = 'eczema_FLG_genotypes.dat'
@@ -72,6 +72,9 @@ plotBoxSimple <-function(gene) {
   list[[1]] = t(counts.norm[name,1:10])
   list[[2]] = t(counts.norm[name,11:36])
   boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#d6ca79'),axes=FALSE)
+  # adding points to controls only as required by Nat. Comms. when n =< 10
+  # using jitter to see points more clearly
+  points(rbind(cbind(jitter(rep(1, 10)),list[[1]]), cbind(2,rep(NA,26))))
   box()
   axis(2)
   mtext("Gene Expression (Normalised read counts)",side=2,line=3,cex=1.2)
