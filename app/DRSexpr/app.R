@@ -10,7 +10,7 @@
 library(shiny)
 library(edgeR)
 
-version = "0.8.5"
+version = "0.8.6"
 countsFile = 'all_gene_expression.tsv'
 ctrlGenotypesFile = 'control_FLG_genotypes.dat'
 caseGenotypesFile = 'eczema_FLG_genotypes.dat'
@@ -184,9 +184,9 @@ server <- function(input, output) {
                 width = 8, height = 8, pointsize = 14, family = "sans", bg = "transparent",
                 antialias = "subpixel",fallback_resolution = 300)
       if (input$plotType == 'simple') {
-        plotBoxSimple(input$gene)
+        plotBoxSimple(input$gene, input$addPoints)
       } else {
-        plotBoxGeno(input$gene)
+        plotBoxGeno(input$gene, input$addPoints)
       }
       dev.off()
     },
