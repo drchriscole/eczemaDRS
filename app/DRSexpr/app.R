@@ -10,7 +10,7 @@
 library(shiny)
 library(edgeR)
 
-version = "0.8"
+version = "0.8.5"
 countsFile = 'all_gene_expression.tsv'
 ctrlGenotypesFile = 'control_FLG_genotypes.dat'
 caseGenotypesFile = 'eczema_FLG_genotypes.dat'
@@ -66,15 +66,24 @@ d = DGEList(counts.dat,group = genotypes)
 d = calcNormFactors(d)
 counts.norm = data.frame(cpm(d, normalized.lib.sizes=T))
 
-plotBoxSimple <-function(gene) {
+plotBoxSimple <-function(gene, points='n') {
   name = gene.names[gene.names$name==gene,1]
   list = list()
   list[[1]] = t(counts.norm[name,1:10])
   list[[2]] = t(counts.norm[name,11:36])
-  boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#d6ca79'),axes=FALSE)
-  # adding points to controls only as required by Nat. Comms. when n =< 10
-  # using jitter to see points more clearly
-  points(rbind(cbind(jitter(rep(1, 10)),list[[1]]), cbind(2,rep(NA,26))))
+  if (points == 'y') {
+    # create blank boxplot with the correct y-axis limits
+    df = data.frame(A = rep(NA,3), B = rep(NA,3))
+    boxplot(df, cex.axis=0.8, axes=FALSE, ylim=c(floor(min(counts.norm[name,])),
+                                                 ceiling(max(counts.norm[name,]))))
+    # plot boxplots without outliers
+    boxplot(list, cex.axis = 0.8, varwidth=FALSE, col=c('#fff8c7','#d6ca79'), 
+            axes = FALSE, add = TRUE, outline = FALSE)
+    # overlay points using jitter to see them more clearly
+    points(rbind(cbind(jitter(rep(1, 10)),list[[1]]), cbind(jitter(rep(2, 26)),list[[2]])), pch = 16)
+  } else {
+    boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#d6ca79'),axes=FALSE)
+  }
   box()
   axis(2)
   mtext("Gene Expression (Normalised read counts)",side=2,line=3,cex=1.2)
@@ -86,14 +95,29 @@ plotBoxSimple <-function(gene) {
   title(sprintf("%s (%s)",gene,name))
 }
 
-plotBoxGeno <-function(gene) {
+plotBoxGeno <-function(gene, points = 'n') {
   name = gene.names[gene.names$name==gene,1]
   list = list()
   list[[1]] = t(counts.norm[name,colnames(counts.norm) %in% ctrl.wt])
   list[[2]] = t(counts.norm[name,colnames(counts.norm) %in% case.wt])
   list[[3]] = t(counts.norm[name,colnames(counts.norm) %in% case.het])
   list[[4]] = t(counts.norm[name,colnames(counts.norm) %in% case.chet])
-  boxplot(list,cex.axis=0.8,varwidth=FALSE, col=c('#fff8c7','#c9dfff','#d9c9ff','#c9ffe9'),axes=FALSE)
+  if (points == 'y') {
+    df = data.frame(A = rep(NA,3), B = rep(NA,3), C = rep(NA,3), D = rep(NA,3))
+    boxplot(df,cex.axis=0.8,axes=FALSE, ylim=c(floor(min(counts.norm[name,])),
+                                               ceiling(max(counts.norm[name,]))))
+    boxplot(list, cex.axis = 0.8, varwidth = FALSE, 
+            col=c('#fff8c7','#c9dfff','#d9c9ff','#c9ffe9'),axes=FALSE, 
+            outline = FALSE, add = TRUE)
+    points(rbind(cbind(jitter(rep(1, 8)),list[[1]]), 
+                 cbind(jitter(rep(2, 7)),list[[2]]),
+                 cbind(jitter(rep(3, 12)),list[[3]]),
+                 cbind(jitter(rep(4, 7)),list[[4]])), pch = 16)
+    
+  } else {
+    boxplot(list, cex.axis = 0.8, varwidth = FALSE, 
+            col = c('#fff8c7','#c9dfff','#d9c9ff','#c9ffe9'), axes = FALSE)
+  }
   box()
   axis(2)
   mtext("Gene Expression (Normalised read counts)",side=2,line=3,cex=1.2)
@@ -121,6 +145,10 @@ ui <- fluidPage(
                       c("Simple Cases vs Controls" = "simple",
                         "Cases vs Controls Stratified by FLG Genotype" = "genotypes"),
                       selected = "simple"),
+         radioButtons("addPoints", "Show data points:",
+                      c("Yes" = 'y',
+                        "No" = 'n'),
+                        selected = 'n'),
          width = 3
       ),
       
@@ -142,9 +170,9 @@ server <- function(input, output) {
         stop(sprintf("Gene '%s' not found in data. Either it is not a valid gene or it is not expressed.", input$gene))
       }
       if (input$plotType == 'simple') {
-        plotBoxSimple(input$gene)
+        plotBoxSimple(input$gene, input$addPoints)
       } else {
-        plotBoxGeno(input$gene)
+        plotBoxGeno(input$gene, input$addPoints)
       }
   }, width = 500, height = 400)
   
